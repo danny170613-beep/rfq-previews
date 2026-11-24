@@ -1,0 +1,371 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Northline Precision · RFQ concept</title>
+<meta name="description" content="Concept build: an RFQ page for a small CNC machine shop. Drawing upload, the fields estimators need, and an instant confirmation.">
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* Two colors only: paper + ink (and their shades). The one loud moment is the inverted RFQ block. */
+:root{
+  --paper:#ECE8E0; --paper-2:#E2DDD3; --ink:#15171A;
+  --ink-70:rgba(21,23,26,.7); --ink-45:rgba(21,23,26,.45); --ink-12:rgba(21,23,26,.12);
+  --paper-70:rgba(236,232,224,.7); --paper-45:rgba(236,232,224,.45); --paper-14:rgba(236,232,224,.14);
+  --display:"Instrument Serif",Georgia,serif; --body:"Geist",system-ui,sans-serif; --mono:"Geist Mono",ui-monospace,monospace;
+  --gut:clamp(16px,4vw,48px); --ease:cubic-bezier(.22,.8,.24,1);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{background:var(--paper)}
+body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+img{display:block;max-width:100%}
+a{color:inherit}
+.mono{font-family:var(--mono);font-size:12px;letter-spacing:.06em;text-transform:uppercase}
+.wrap{padding:0 var(--gut);max-width:1360px;margin:0 auto}
+
+/* concept ribbon */
+.ribbon{background:var(--ink);color:var(--paper-70);text-align:center;padding:8px var(--gut)}
+
+/* nav */
+nav{display:flex;align-items:center;justify-content:space-between;padding:20px var(--gut);max-width:1360px;margin:0 auto}
+.logo{font-family:var(--display);font-size:26px;letter-spacing:-.01em;text-decoration:none}
+.logo i{font-style:italic}
+.nav-links{display:flex;gap:28px;align-items:center}
+.nav-links a{text-decoration:none;font-size:14px;color:var(--ink-70)}
+.nav-links a:hover{color:var(--ink)}
+.nav-links a.btn,.nav-links a.btn:hover{color:var(--paper)}
+.btn{display:inline-flex;align-items:center;gap:10px;background:var(--ink);color:var(--paper);border:0;border-radius:999px;padding:14px 22px;font:500 15px var(--body);text-decoration:none;cursor:pointer;transition:transform .2s var(--ease),opacity .2s}
+.btn:hover{transform:translateY(-1px)}
+.btn:active{transform:translateY(0) scale(.98)}
+.btn .arr{transition:transform .25s var(--ease)}
+.btn:hover .arr{transform:translateX(3px)}
+.btn.inv{background:var(--paper);color:var(--ink)}
+@media(max-width:760px){.nav-links a:not(.btn){display:none}}
+
+/* hero */
+.hero{display:grid;grid-template-columns:1.1fr .9fr;gap:clamp(24px,4vw,64px);align-items:end;padding-top:clamp(32px,6vw,80px);padding-bottom:clamp(40px,6vw,88px)}
+.kicker{display:flex;gap:10px;align-items:center;color:var(--ink-70);margin-bottom:22px}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--ink);animation:pulse 2s infinite}
+@keyframes pulse{50%{opacity:.25}}
+h1{font-family:var(--display);font-weight:400;font-size:clamp(52px,8.4vw,128px);line-height:.92;letter-spacing:-.025em}
+h1 em{font-style:italic}
+.lede{font-size:clamp(17px,1.5vw,20px);color:var(--ink-70);max-width:34ch;margin:28px 0 34px}
+.hero-cta{display:flex;gap:18px;align-items:center;flex-wrap:wrap}
+.hero-cta small{color:var(--ink-45)}
+.hero-img{position:relative;aspect-ratio:4/5;border-radius:6px;overflow:hidden}
+.hero-img img{width:100%;height:115%;object-fit:cover;filter:grayscale(1) contrast(1.05)}
+.hero-tag{position:absolute;left:14px;bottom:14px;background:var(--paper);padding:10px 14px;border-radius:4px}
+.certs{display:flex;flex-wrap:wrap;gap:10px 28px;border-top:1px solid var(--ink-12);padding:18px 0;color:var(--ink-70)}
+@media(max-width:860px){.hero{grid-template-columns:1fr}.hero-img{aspect-ratio:4/3}}
+
+/* story (pinned scroll) */
+.story{background:var(--paper-2);padding:clamp(64px,9vw,120px) 0}
+.story-grid{display:grid;grid-template-columns:.9fr 1.1fr;gap:clamp(24px,5vw,80px)}
+.story h2,.caps h2,.rfq h2{font-family:var(--display);font-weight:400;font-size:clamp(40px,5.6vw,80px);line-height:.95;letter-spacing:-.02em}
+.story h2 em,.caps h2 em,.rfq h2 em{font-style:italic}
+.story-left p{color:var(--ink-70);max-width:36ch;margin-top:20px}
+.story-sticky{position:sticky;top:12vh}
+.steps{display:flex;flex-direction:column;gap:clamp(40px,10vh,120px);padding:6vh 0}
+.step{border-top:1px solid var(--ink-12);padding-top:22px;opacity:.28;transition:opacity .4s var(--ease)}
+.step.on{opacity:1}
+.step .n{color:var(--ink-45)}
+.step h3{font-family:var(--display);font-weight:400;font-size:clamp(30px,3.2vw,44px);line-height:1.05;margin:10px 0 10px}
+.step p{color:var(--ink-70);max-width:42ch}
+.meter{height:2px;background:var(--ink-12);margin-top:28px;max-width:280px}
+.meter span{display:block;height:100%;width:0;background:var(--ink)}
+@media(max-width:860px){.story-grid{grid-template-columns:1fr}.story-sticky{position:static}.step{opacity:1}}
+
+/* capabilities: hover reveal */
+.caps{padding:clamp(64px,9vw,120px) 0}
+.caps-head{display:flex;justify-content:space-between;align-items:end;gap:24px;flex-wrap:wrap;margin-bottom:40px}
+.caps-head p{color:var(--ink-70);max-width:38ch}
+.cap-list{border-top:1px solid var(--ink-12)}
+.cap{position:relative;display:grid;grid-template-columns:80px 1fr auto;gap:16px;align-items:baseline;padding:26px 0;border-bottom:1px solid var(--ink-12);cursor:default}
+.cap .n{color:var(--ink-45)}
+.cap h3{font-family:var(--display);font-weight:400;font-size:clamp(28px,3.6vw,52px);line-height:1;transition:transform .35s var(--ease)}
+.cap .spec{color:var(--ink-70);text-align:right}
+.cap:hover h3{transform:translateX(12px)}
+.cap-peek{position:fixed;width:280px;aspect-ratio:4/3;border-radius:6px;overflow:hidden;pointer-events:none;opacity:0;transform:translate(-50%,-50%) scale(.92);transition:opacity .25s var(--ease),transform .25s var(--ease);z-index:20}
+.cap-peek.show{opacity:1;transform:translate(-50%,-50%) scale(1)}
+.cap-peek img{width:100%;height:100%;object-fit:cover;filter:grayscale(1)}
+@media(max-width:700px){.cap{grid-template-columns:44px 1fr}.cap .spec{grid-column:2;text-align:left}.cap-peek{display:none}}
+
+/* RFQ: the loud moment */
+.rfq{background:var(--ink);color:var(--paper);padding:clamp(64px,9vw,128px) 0;border-radius:clamp(16px,2.4vw,32px) clamp(16px,2.4vw,32px) 0 0}
+.rfq-grid{display:grid;grid-template-columns:.8fr 1.2fr;gap:clamp(28px,5vw,80px)}
+.rfq-intro p{color:var(--paper-70);max-width:34ch;margin:22px 0 30px}
+.promise{list-style:none;display:grid;gap:14px;color:var(--paper-70)}
+.promise li{display:flex;gap:12px;align-items:baseline}
+.promise li::before{content:"";width:14px;height:1px;background:var(--paper);flex:none;transform:translateY(-4px)}
+form{display:grid;gap:18px}
+.drop{position:relative;border:1px dashed var(--paper-45);border-radius:10px;padding:34px 22px;text-align:center;transition:border-color .2s,background .2s;cursor:pointer}
+.drop:hover,.drop.over{border-color:var(--paper);background:var(--paper-14)}
+.drop input{position:absolute;inset:0;opacity:0;cursor:pointer}
+.drop strong{display:block;font-family:var(--display);font-weight:400;font-size:30px;margin:10px 0 6px}
+.drop small{color:var(--paper-45)}
+.files{display:grid;gap:8px}
+.file{display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center;border:1px solid var(--paper-14);border-radius:8px;padding:10px 12px;font-size:14px}
+.file .ext{font-family:var(--mono);font-size:11px;border:1px solid var(--paper-45);border-radius:4px;padding:3px 6px}
+.file .bar{grid-column:1/-1;height:2px;background:var(--paper-14);border-radius:2px;overflow:hidden}
+.file .bar span{display:block;height:100%;width:0;background:var(--paper);transition:width .9s var(--ease)}
+.file .x{background:none;border:0;color:var(--paper-45);cursor:pointer;font-size:18px;line-height:1;padding:4px 8px}
+.file .x:hover{color:var(--paper)}
+.err{color:var(--paper);font-size:14px;border-left:2px solid var(--paper);padding-left:10px;display:none}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+label{display:grid;gap:8px;font-size:13px;color:var(--paper-70)}
+input[type=text],input[type=email],input[type=date],select,textarea{width:100%;background:transparent;border:0;border-bottom:1px solid var(--paper-45);color:var(--paper);font:16px var(--body);padding:10px 0;border-radius:0;outline:none;transition:border-color .2s}
+input:focus,select:focus,textarea:focus{border-color:var(--paper)}
+select option{color:var(--ink)}
+textarea{resize:vertical;min-height:70px}
+::placeholder{color:var(--paper-45)}
+.submit-row{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;margin-top:6px}
+.submit-row small{color:var(--paper-45)}
+.done{display:none;border:1px solid var(--paper-45);border-radius:12px;padding:clamp(24px,4vw,40px)}
+.done.show{display:block;animation:rise .5s var(--ease)}
+@keyframes rise{from{opacity:0;transform:translateY(12px)}}
+.done h3{font-family:var(--display);font-weight:400;font-size:clamp(34px,4vw,54px);line-height:1;margin:14px 0}
+.done p{color:var(--paper-70);max-width:46ch}
+.done .ref{display:inline-block;margin-top:20px;border:1px solid var(--paper-45);border-radius:6px;padding:8px 12px}
+.timeline{list-style:none;display:grid;gap:10px;margin-top:24px;color:var(--paper-70);font-size:15px}
+.timeline b{color:var(--paper);font-weight:500}
+@media(max-width:900px){.rfq-grid{grid-template-columns:1fr}}
+@media(max-width:560px){.row{grid-template-columns:1fr}}
+
+footer{background:var(--ink);color:var(--paper-45);padding:28px var(--gut) 40px;border-top:1px solid var(--paper-14)}
+footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:0}
+
+.reveal{opacity:0;transform:translateY(24px)}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.reveal{opacity:1;transform:none}}
+</style>
+</head>
+<body>
+
+<div class="ribbon mono">Concept build · Northline Precision is a sample shop, not a real company</div>
+
+<nav>
+  <a class="logo" href="#">Northline <i>Precision</i></a>
+  <div class="nav-links">
+    <a href="#how">How quoting works</a>
+    <a href="#caps">Capabilities</a>
+    <a class="btn" href="#rfq">Request a quote <span class="arr">→</span></a>
+  </div>
+</nav>
+
+<header class="wrap">
+  <div class="hero">
+    <div>
+      <div class="kicker mono reveal"><span class="dot"></span> Quoting desk open · replies within 24 hours</div>
+      <h1 class="reveal">Send the print.<br><em>Get a price</em><br>by tomorrow.</h1>
+      <p class="lede reveal">STEP, IGES or PDF goes straight to the estimator who prices it. You get a confirmation right away and a real quote within one business day.</p>
+      <div class="hero-cta reveal">
+        <a class="btn" href="#rfq">Upload a drawing <span class="arr">→</span></a>
+        <small class="mono">No account. No phone tag.</small>
+      </div>
+    </div>
+    <div class="hero-img reveal">
+      <img id="heroImg" src="https://images.unsplash.com/photo-1666634157070-6fd830fb5672?w=1400&q=80&auto=format&fit=crop" alt="A metal rod held in a lathe chuck being machined">
+      <div class="hero-tag mono">5-axis · ±0.0005" · 1–5,000 pcs</div>
+    </div>
+  </div>
+  <div class="certs mono reveal">
+    <span>ISO 9001:2015</span><span>AS9100D</span><span>ITAR registered</span><span>First article (AS9102)</span><span>Material certs with every lot</span>
+  </div>
+</header>
+
+<section class="story" id="how">
+  <div class="wrap story-grid">
+    <div class="story-left">
+      <div class="story-sticky">
+        <p class="mono" style="color:var(--ink-45);margin:0 0 16px">What happens after you hit send</p>
+        <h2>No black hole<br><em>after the upload.</em></h2>
+        <p>A buyer who emails a shop at 9 pm and hears nothing usually moves on to the next one. Here, every request gets an answer in seconds and a price within a day.</p>
+        <div class="meter"><span id="meter"></span></div>
+      </div>
+    </div>
+    <div class="steps">
+      <div class="step"><span class="n mono">01 · Upload</span><h3>Drop the drawing in.</h3><p>STEP, IGES, DXF, SolidWorks or a PDF print, up to 50 MB each. Add quantity, material and the tightest tolerance. That's all an estimator needs to start.</p></div>
+      <div class="step"><span class="n mono">02 · Seconds later</span><h3>A confirmation lands in your inbox.</h3><p>With a reference number and the name of the person quoting it, so you know it arrived and who to follow up with.</p></div>
+      <div class="step"><span class="n mono">03 · Same day</span><h3>An engineer reviews it.</h3><p>If something on the print is unclear, you get one short question, not silence.</p></div>
+      <div class="step"><span class="n mono">04 · Within 24 hours</span><h3>You get a real quote.</h3><p>Price, lead time and any DFM notes in one email you can forward to purchasing.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="caps" id="caps">
+  <div class="wrap">
+    <div class="caps-head">
+      <h2>What we <em>make.</em></h2>
+      <p>Prototype to production runs in aluminum, steels, titanium and engineering plastics.</p>
+    </div>
+    <div class="cap-list">
+      <div class="cap" data-img="https://images.unsplash.com/photo-1740209475472-aa7d280f7452?w=700&q=75&auto=format&fit=crop"><span class="n mono">01</span><h3>5-axis milling</h3><span class="spec mono">Up to 30" × 20" × 18"</span></div>
+      <div class="cap" data-img="https://images.unsplash.com/photo-1666634157070-6fd830fb5672?w=700&q=75&auto=format&fit=crop"><span class="n mono">02</span><h3>CNC turning</h3><span class="spec mono">Ø0.125"–12" · live tooling</span></div>
+      <div class="cap" data-img="https://images.unsplash.com/photo-1548683726-203119be6a39?w=700&q=75&auto=format&fit=crop"><span class="n mono">03</span><h3>Production runs</h3><span class="spec mono">Blanket orders · kanban</span></div>
+      <div class="cap" data-img="https://images.unsplash.com/photo-1769147339214-076740872485?w=700&q=75&auto=format&fit=crop"><span class="n mono">04</span><h3>Inspection</h3><span class="spec mono">CMM · FAI · full PPAP</span></div>
+    </div>
+  </div>
+  <div class="cap-peek" id="peek"><img alt=""></div>
+</section>
+
+<section class="rfq" id="rfq">
+  <div class="wrap rfq-grid">
+    <div class="rfq-intro">
+      <p class="mono" style="color:var(--paper-45);margin:0 0 16px">Request for quote</p>
+      <h2>Send the part.<br><em>We'll take it from here.</em></h2>
+      <p>One form, one upload. A real estimator reads every request.</p>
+      <ul class="promise">
+        <li>Confirmation in seconds, with a reference number</li>
+        <li>Quote within one business day</li>
+        <li>Your drawings stay private. NDA on request.</li>
+      </ul>
+    </div>
+
+    <div>
+      <form id="rfqForm" novalidate>
+        <div class="drop" id="drop">
+          <input type="file" id="fileIn" multiple accept=".step,.stp,.igs,.iges,.dxf,.dwg,.pdf,.x_t,.sldprt,.stl">
+          <span class="mono" style="color:var(--paper-45)">Drawings & models</span>
+          <strong>Drop files here, or browse</strong>
+          <small class="mono">STEP · IGES · DXF · SLDPRT · PDF · up to 50 MB each</small>
+        </div>
+        <div class="err" id="err"></div>
+        <div class="files" id="files"></div>
+
+        <div class="row">
+          <label>Quantity<input type="text" name="qty" placeholder="e.g. 50 pcs, then 500/yr"></label>
+          <label>Material<input type="text" name="mat" placeholder="e.g. 6061-T6, 17-4 PH"></label>
+        </div>
+        <div class="row">
+          <label>Tightest tolerance<input type="text" name="tol" placeholder="e.g. ±0.0005&quot;"></label>
+          <label>Need by<input type="date" name="due"></label>
+        </div>
+        <div class="row">
+          <label>Name<input type="text" name="name" placeholder="Your name" required></label>
+          <label>Work email<input type="email" name="email" placeholder="you@company.com" required></label>
+        </div>
+        <label>Anything else? (finish, certs, assembly)<textarea name="notes" placeholder="Anodize Type II black, material certs required…"></textarea></label>
+        <div class="submit-row">
+          <small class="mono">Preview only: nothing is sent from this page.</small>
+          <button class="btn inv" type="submit">Send for quote <span class="arr">→</span></button>
+        </div>
+      </form>
+
+      <div class="done" id="done" role="status" aria-live="polite">
+        <span class="mono" style="color:var(--paper-45)">Received · <span id="refTop"></span></span>
+        <h3>Got it, <span id="who">thanks</span>.<br><em>You'll hear back within 24 hours.</em></h3>
+        <p>A copy of your request and files just went to <b id="mail"></b>. Sam in estimating is quoting it.</p>
+        <ol class="timeline">
+          <li><b>Now</b> · confirmation email with your reference number</li>
+          <li><b>Today</b> · engineering review, and a question only if the print needs one</li>
+          <li><b>Within 24 h</b> · price, lead time and DFM notes</li>
+        </ol>
+        <span class="ref mono" id="ref"></span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap mono">
+    <span>Northline Precision · concept build</span>
+    <span>RFQ page concept by Danny Danny</span>
+  </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script src="https://unpkg.com/lenis@1.1.13/dist/lenis.min.js"></script>
+<script>
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* motion pass */
+if (!reduce && window.gsap) {
+  gsap.registerPlugin(ScrollTrigger);
+  if (window.Lenis) {
+    const lenis = new Lenis({ duration: 1.1 });
+    lenis.on('scroll', ScrollTrigger.update);
+    gsap.ticker.add(t => lenis.raf(t * 1000));
+    gsap.ticker.lagSmoothing(0);
+    document.querySelectorAll('a[href^="#"]').forEach(a => a.addEventListener('click', e => {
+      const t = document.querySelector(a.getAttribute('href')); if (!t) return;
+      e.preventDefault(); lenis.scrollTo(t, { offset: -10 });
+    }));
+  }
+  gsap.to('header .reveal', { opacity: 1, y: 0, duration: .9, ease: 'power3.out', stagger: .08, delay: .1 });
+  gsap.to('#heroImg', { yPercent: -12, ease: 'none', scrollTrigger: { trigger: '.hero-img', start: 'top top', end: 'bottom top', scrub: true } });
+  // scroll storyline
+  const steps = gsap.utils.toArray('.step');
+  steps.forEach((s, i) => ScrollTrigger.create({
+    trigger: s, start: 'top 60%', end: 'bottom 40%',
+    onToggle: self => s.classList.toggle('on', self.isActive),
+    onEnter: () => gsap.to('#meter', { width: ((i + 1) / steps.length * 100) + '%', duration: .5, ease: 'power2.out' }),
+    onEnterBack: () => gsap.to('#meter', { width: ((i + 1) / steps.length * 100) + '%', duration: .5, ease: 'power2.out' })
+  }));
+  gsap.from('.cap', { opacity: 0, y: 30, stagger: .08, duration: .7, ease: 'power3.out', scrollTrigger: { trigger: '.cap-list', start: 'top 80%' } });
+  gsap.from('.rfq-grid > *', { opacity: 0, y: 40, stagger: .12, duration: .9, ease: 'power3.out', scrollTrigger: { trigger: '.rfq', start: 'top 70%' } });
+} else {
+  document.querySelectorAll('.reveal').forEach(el => { el.style.opacity = 1; el.style.transform = 'none'; });
+  document.querySelectorAll('.step').forEach(s => s.classList.add('on'));
+}
+
+/* hover reveal */
+const peek = document.getElementById('peek'), peekImg = peek.querySelector('img');
+document.querySelectorAll('.cap').forEach(c => {
+  c.addEventListener('mouseenter', () => { peekImg.src = c.dataset.img; peek.classList.add('show'); });
+  c.addEventListener('mouseleave', () => peek.classList.remove('show'));
+  c.addEventListener('mousemove', e => { peek.style.left = e.clientX + 'px'; peek.style.top = e.clientY + 'px'; });
+});
+
+/* RFQ form (preview: nothing leaves the page) */
+const okExt = ['step','stp','igs','iges','dxf','dwg','pdf','x_t','sldprt','stl'];
+const fileIn = document.getElementById('fileIn'), drop = document.getElementById('drop');
+const list = document.getElementById('files'), err = document.getElementById('err');
+let picked = [];
+const fmt = b => b > 1048576 ? (b / 1048576).toFixed(1) + ' MB' : Math.max(1, Math.round(b / 1024)) + ' KB';
+function showErr(msg) { err.textContent = msg; err.style.display = msg ? 'block' : 'none'; }
+function render() {
+  list.innerHTML = '';
+  picked.forEach((f, i) => {
+    const ext = f.name.split('.').pop().toUpperCase();
+    const row = document.createElement('div'); row.className = 'file';
+    row.innerHTML = `<span class="ext">${ext}</span><span>${f.name.replace(/</g,'&lt;')} <span style="color:var(--paper-45)">· ${fmt(f.size)}</span></span><button type="button" class="x" aria-label="Remove ${f.name.replace(/"/g,'')}">×</button><div class="bar"><span></span></div>`;
+    row.querySelector('.x').onclick = () => { picked.splice(i, 1); render(); };
+    list.appendChild(row);
+    requestAnimationFrame(() => setTimeout(() => row.querySelector('.bar span').style.width = '100%', 30));
+  });
+}
+function add(files) {
+  const bad = [];
+  [...files].forEach(f => {
+    const ext = f.name.split('.').pop().toLowerCase();
+    if (!okExt.includes(ext)) bad.push(`${f.name}: that file type can't be quoted from. Try STEP, IGES, DXF or PDF.`);
+    else if (f.size > 50 * 1048576) bad.push(`${f.name} is over 50 MB. Zip it, or send the PDF print first.`);
+    else picked.push(f);
+  });
+  showErr(bad.join(' ')); render();
+}
+fileIn.addEventListener('change', e => { add(e.target.files); fileIn.value = ''; });
+['dragenter','dragover'].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.add('over'); }));
+['dragleave','drop'].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.remove('over'); }));
+drop.addEventListener('drop', e => add(e.dataTransfer.files));
+
+document.getElementById('rfqForm').addEventListener('submit', e => {
+  e.preventDefault();
+  const f = e.target, name = f.name.value.trim(), email = f.email.value.trim();
+  if (!picked.length) return showErr('Add at least one drawing so the estimator has something to price.');
+  if (!name || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) return showErr('Add your name and a work email so the quote has somewhere to go.');
+  showErr('');
+  const ref = 'NLP-' + new Date().toISOString().slice(2,10).replace(/-/g,'') + '-' + Math.floor(100 + Math.random() * 900);
+  document.getElementById('who').textContent = name.split(' ')[0];
+  document.getElementById('mail').textContent = email;
+  document.getElementById('ref').textContent = 'Ref ' + ref + ' · ' + picked.length + ' file' + (picked.length > 1 ? 's' : '');
+  document.getElementById('refTop').textContent = ref;
+  f.style.display = 'none';
+  document.getElementById('done').classList.add('show');
+});
+</script>
+</body>
+</html>
